@@ -41,9 +41,8 @@ public class UserManager {
 			if(userList[i].accCnt != 0) {
 				for (int j = 0; j < userList[i].accCnt; j++) {
 					System.out.printf("(%s:%d)", userList[i].accs[j].accNumber, userList[i].accs[j].money);
-					if(j != userList[i].accCnt-1) {
+					if(j != userList[i].accCnt-1) 
 						System.out.print(", ");
-					}
 				}
 			}
 			System.out.println();
@@ -67,35 +66,84 @@ public class UserManager {
 		// 아이디와 비밀번호를 입력받는다. 
 		System.out.print("...ID : ");
 		String myId = scan.next();
-		System.out.print("...PW : ");
-		String myPw = scan.next();
-		
 		// 아이디가 없는 아이디면 리턴
 		identifier = checkId(myId);
-		if(identifier == -1 || !userList[identifier].pw.equals(myPw)) 
+		if(identifier == -1) 
 			return -1;
-		// 아이디가 있는경우 조회, 아이디와 비밀번호가 일치하지 않으면
+
+		// 아이디가 있는경우 비밀번호 입력받기.
+		System.out.print("...PW : ");
+		String myPw = scan.next();
+
+		// 아이디와 비밀번호가 일치하지 않으면
+		if(!userList[identifier].pw.equals(myPw)) 
+			return -1;
+		
 		// 아이디와 비밀번호가 일치하면
 		return identifier;
-		
 	}
 	
+	// 있는아이디면 몇번째인지 알려주는 메소드 
 	int checkId(String id) {
 		int nExist = -1;
 		for (int i = 0; i < userCnt; i++) {
 			if(id.equals(userList[i].id)) {
 				nExist = i;
-				
 			}
 		}
 		return nExist;		
 	}
 	
 	void joinMember() {
+		int identifier = -1;
+		// 아이디와 비밀번호를 입력받는다. 
+		System.out.print("...ID : ");
+		String myId = scan.next();
+		// 이미 있는 아이디면 리턴
+		identifier = checkId(myId);
+		if(identifier != -1) {
+			System.out.println("이미 존재하는 아이디입니다. ");
+			return;
+		}
 		
+		// 아이디가 없는경우 가입가능. 비밀번호 입력받기.
+		System.out.print("...PW : ");
+		String myPw = scan.next();
+		User[] temp = userList;
+		userList = new User[userCnt+1];
+		for (int i = 0; i < userCnt; i++) {
+			userList[i] = temp[i];
+		}
+		userList[userCnt] = new User();
+		userList[userCnt].id = myId;
+		userList[userCnt].pw = myPw;
+//		userList[userCnt].accs = null;
+//		userList[userCnt].accCnt = 0;
+		userCnt++;
+		System.out.printf("반갑습니다. %s님 회원가입 완료!\n", myId);
 	}
 	
-	void deleteMember() {
+	int deleteMember(int identifier) {
+		System.out.print("...PW : ");
+		String myPw = scan.next();
+		
+		// 아이디와 비밀번호가 일치하지 않으면 회원탈퇴불가 
+		if(!userList[identifier].pw.equals(myPw)) {
+			System.out.println("올바르지 못한 비밀번호입니다. 회원탈퇴메뉴 종료");
+			return -1;
+		}
+		
+		User[] temp = userList;
+		userList = new User[userCnt-1];
+		int j = 0;
+		for (int i = 0; i < userCnt; i++) {
+			if(i != identifier) { // ******************
+				userList[j++] = temp[i];				
+			}
+		}
+		userCnt--;
+		temp = null;
+		return 1;
 		
 	}
 
