@@ -28,6 +28,7 @@ public class UserManager {
 			userList[i] = new User(); 			// *****
 			userList[i].id = ids[i];
 			userList[i].pw = pws[i];
+			userList[i].accs = new Account[1];
 			userList[i].accs[0] = new Account(); // ******
 			userList[i].accs[0].accNumber = accs[i];
 			userList[i].accs[0].money = moneys[i];
@@ -39,11 +40,14 @@ public class UserManager {
 		for (int i = 0; i < userCnt; i++) {
 			System.out.printf("[%d] ID(%s) PW(%s)\t", i+1, userList[i].id, userList[i].pw);
 			if(userList[i].accCnt != 0) {
-				for (int j = 0; j < userList[i].accCnt; j++) {
-					System.out.printf("(%s:%d)", userList[i].accs[j].accNumber, userList[i].accs[j].money);
-					if(j != userList[i].accCnt-1) 
-						System.out.print(", ");
-				}
+				AccountManager.getInstance().printAcc(i);
+//				for (int j = 0; j < userList[i].accCnt; j++) {
+//					System.out.printf("(%s:%d)", userList[i].accs[j].accNumber, userList[i].accs[j].money);
+//					if(j != userList[i].accCnt-1) 
+//						System.out.print(", ");
+//				}
+			} else if(userList[i].accCnt == 0) {
+				System.out.println("아직 계좌를 가지지 않는 회원님입니다. ");
 			}
 			System.out.println();
 		}
@@ -60,6 +64,18 @@ public class UserManager {
 		}
 		return nDuple;
 	}
+	
+	boolean getCheckAcc(int identifier, String acc) {
+		boolean nDuple = false;
+		for (int i = 0; i < userList[identifier].accCnt; i++) {
+			if(userList[identifier].accs[i].accNumber.equals(acc)) {
+				nDuple = true;
+				}
+			}
+		return nDuple;
+	}
+	
+	
 	
 	int logUser() {
 		int identifier = -1;
@@ -117,8 +133,6 @@ public class UserManager {
 		userList[userCnt] = new User();
 		userList[userCnt].id = myId;
 		userList[userCnt].pw = myPw;
-//		userList[userCnt].accs = null;
-//		userList[userCnt].accCnt = 0;
 		userCnt++;
 		System.out.printf("반갑습니다. %s님 회원가입 완료!\n", myId);
 	}
